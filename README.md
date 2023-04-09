@@ -18,13 +18,19 @@ Game lấy ý tưởng từ bộ truyện tranh Naruto và xoay quanh nhân vậ
 ### Di chuyển
 
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_a.png" alt="Sasuke fight!!!" width=20 />   :  Di chuyển sang trái
+
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_d.png" alt="Sasuke fight!!!" width=20 />   :  Di chuyển sang phải
+
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_w.png" alt="Sasuke fight!!!" width=20 />   :  Nhảy
+
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_l.png" alt="Sasuke fight!!!" width=20 />   :  Lướt
 
 ### Chiến đấu
+
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_j.png" alt="Sasuke fight!!!" width=20 />   :  Đấm
+
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_k.png" alt="Sasuke fight!!!" width=20 />   :  Đá
+
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_o.png" alt="Sasuke fight!!!" width=20 />   : Chidori
 
 ## Luật chơi
