@@ -1,11 +1,10 @@
 # SASUKE FIGHT!!!
 
-# ____________________________________________________________________________
+#  
 
 <img src="https://mystickermania.com/cdn/stickers/naruto/sasuke-uchiha-kunai-512x512.png" alt="Sasuke fight!!!" width=600 />
 
-# ____________________________________________________________________________
-
+#  
 ## Mô tả game
 Tên Game : SASUKE FIGHT!!!
 
@@ -38,9 +37,9 @@ Người chơi sẽ phải chiến đấu để đánh bại hết quái vật m
 
 Cuối trò chơi, người chơi sẽ phải chiến đấu Boss cuối để có thể thắng được trò chơi và đưa Sasuke ra khỏi vùng đất cấm.
 
-# ____________________________________________________________________________
+#  
 
 <img src="https://www.seekpng.com/png/detail/333-3332479_sasuke-png-picture-kid-sasuke-png.png" alt="Sasuke fight!!!" width=600 />
 
-# ____________________________________________________________________________
+#  
 
