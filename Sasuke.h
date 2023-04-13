@@ -5,9 +5,11 @@
 #include "Object.h"
 #include "mapgame.h"
 
-#define GRAVITY 0.4
+#define GRAVITY 1
 #define MAX_FAIL 8
-#define SPEED 8
+#define SPEED 10
+#define JUMPSPEED 2
+#define MAXJUMP 2*TILE_SIZE
 
 class Sasuke : public Object
 {
@@ -41,6 +43,8 @@ public:
 	bool Stand_on_ground;
 	int x_map;
 	int y_map;
+	int y_ground;
+	bool death;
 };
 
 #endif

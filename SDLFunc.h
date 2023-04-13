@@ -12,10 +12,9 @@
 
 using namespace std;
 
-const int SCREEN_WIDTH = 1200;
+const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 640;
 const string WINDOW_TITLE = "NARUTO NINJA WAR";
-//SDL_Event mainevent;
 
 const int Colorkey_R = 255;
 const int Colorkey_G = 255;
@@ -35,12 +34,18 @@ SDL_Texture* loadBackGround(string path, SDL_Renderer* renderer);
 #define TILE_SIZE 64
 #define MAX_X 400
 #define MAX_Y 10
+#define FPS 45
+
+const int time_present_one_frame = 1000 / FPS;
 
 typedef struct Input
 {
     int stand;
     int run;
     int jump;
+    int fall;
+    int normal_attack;
+    int hold;
 };
 
 typedef struct Map
