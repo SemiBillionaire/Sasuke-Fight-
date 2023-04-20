@@ -36,7 +36,7 @@ public:
 	double y_pos;
 	int width_character;
 	int height_character;
-	SDL_Rect gif[10];
+	SDL_Rect gif[30];
 	Input type_input;
 	int CurrentIMG;
 	int Direction;
@@ -45,6 +45,7 @@ public:
 	int y_map;
 	int y_ground;
 	bool death;
+	int attack_count;
 };
 
 #endif

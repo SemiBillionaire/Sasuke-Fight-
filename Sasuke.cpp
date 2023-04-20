@@ -2,10 +2,12 @@
 
 int frame_number(Input in)
 {
-	if (in.jump == 1) return 6;
+	if ((in.jump == 1 || in.fall == 1) && in.normal_attack == 1) return 8;
+	else if (in.jump == 1) return 6;
 	else if (in.fall == 1) return 6;
-	else if (in.stand == 1) return 8;
-	else if (in.run == 1) return 10;
+	else if (in.normal_attack) return 13;
+	else if (in.stand == 1) return 6;
+	else if (in.run == 1) return 6;	
 }
 
 Sasuke::Sasuke()
@@ -29,6 +31,7 @@ Sasuke::Sasuke()
 	y_ground = 0;
 	type_input.fall = 0;
 	death = false;
+	attack_count = 0;
 }
 Sasuke::~Sasuke()
 {
@@ -62,8 +65,10 @@ void Sasuke::Present(SDL_Renderer* des)
 {
 	if (Direction == Left)
 	{
-		if (type_input.jump == 1 ) LoadImg("Sasuke/sasuke_jump_up_left.png", des);
+		if (( type_input.jump == 1 || type_input.fall == 1) && type_input.normal_attack == 1) LoadImg("Sasuke/jump_normal_attack_left.png", des);
+		else if (type_input.jump == 1) LoadImg("Sasuke/sasuke_jump_up_left.png", des);
 		else if (type_input.fall == 1 ) LoadImg("Sasuke/sasuke_jump_down_left.png", des);
+		else if (type_input.normal_attack == 1) LoadImg("Sasuke/sasuke_attack_left.png", des);
 		else if (type_input.stand == 1) {
 			LoadImg("Sasuke/sasuke_stand_left_official.png", des); SDL_Delay(50);
 		}
@@ -71,15 +76,25 @@ void Sasuke::Present(SDL_Renderer* des)
 	}
 	else
 	{
-		if (type_input.jump == 1 ) LoadImg("Sasuke/sasuke_jump_up_right.png", des);
-		else if (type_input.fall == 1 ) LoadImg("Sasuke/sasuke_jump_down_right.png", des);
+		if ((type_input.jump == 1 || type_input.fall == 1) && type_input.normal_attack == 1) LoadImg("Sasuke/jump_normal_attack_right.png", des);
+		else if (type_input.jump == 1) LoadImg("Sasuke/sasuke_jump_up_right.png", des);
+		else if (type_input.fall == 1) LoadImg("Sasuke/sasuke_jump_down_right.png", des);
+		else if (type_input.normal_attack == 1) LoadImg("Sasuke/sasuke_attack_right.png", des);
 		else if (type_input.stand == 1) {
 			LoadImg("Sasuke/sasuke_stand_right_official.png", des); SDL_Delay(50);
 		}
 		else if (type_input.run == 1) LoadImg("Sasuke/sasuke_run_right_official.png", des);
 	}
 	CurrentIMG++;
-	if ( CurrentIMG >= frame_number(type_input) ) CurrentIMG = 0;
+	if (CurrentIMG >= frame_number(type_input) && type_input.normal_attack == 1 && attack_count <=5)
+	{
+		attack_count++;
+		CurrentIMG = frame_number(type_input) - 1;
+	}
+	if (attack_count == 6) {
+		attack_count = 0; CurrentIMG = 0;
+	}
+	else if ( CurrentIMG >= frame_number(type_input) ) CurrentIMG = 0;
 	rect_.x = x_pos - x_map;
 	rect_.y = y_pos - y_map;
 	SDL_Rect* current_clip = &gif[CurrentIMG];
@@ -93,6 +108,11 @@ void Sasuke::InputAction(SDL_Event events, SDL_Renderer* renderer)
 	{
 		switch (events.key.keysym.sym)
 		{
+		case SDLK_j:
+		{
+			type_input.normal_attack = 1;
+		}
+		break;
 		case SDLK_w:
 		{
 			if (Stand_on_ground == true) { type_input.jump = 1; y_ground = y_pos; Stand_on_ground = false; }
@@ -134,6 +154,11 @@ void Sasuke::InputAction(SDL_Event events, SDL_Renderer* renderer)
 			type_input.jump = 0;
 		}
 		break;
+		case SDLK_j:
+		{
+			type_input.normal_attack = 0;
+		}
+		break;
 		default:
 		{
 			type_input.run = 0;
@@ -163,6 +188,11 @@ void Sasuke::Move(Map& mymap)
 	} else if (type_input.fall == 1 )
 	{
 		y_value += JUMPSPEED;
+	}
+	if (type_input.normal_attack == 1 && type_input.run == 1)
+	{
+		if (Direction == Right) x_value -= SPEED / 3;
+		else if ( Direction == Left ) x_value += SPEED / 3;
 	}
 	CheckVaCham(mymap);
 	MoveMap(mymap);
@@ -198,7 +228,7 @@ void Sasuke::CheckVaCham(Map& mymap)
 
 	x1 = (x_pos) / TILE_SIZE;
 	y1 = (y_pos + y_value) / TILE_SIZE;
-	x2 = (x_pos + width_character ) / TILE_SIZE;
+	x2 = (x_pos + TILE_SIZE ) / TILE_SIZE;
 	y2 = (y_pos + y_value + TILE_SIZE ) / TILE_SIZE;
 
 	if (x1 >= 0 && x2 < MAX_X && y1 >= 0 && y2 < MAX_Y)
@@ -212,6 +242,10 @@ void Sasuke::CheckVaCham(Map& mymap)
 				y_value = 0;
 				Stand_on_ground = true;
 				type_input.fall = 0;
+			}
+			else if (mymap.tile[y2][x1] == 0 || mymap.tile[y2][x2] == 0 && type_input.jump == 0)
+			{
+				type_input.fall = 1;
 			}
 			else {Stand_on_ground = false;}
 		}
