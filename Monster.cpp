@@ -11,7 +11,7 @@ int frame_number_monster(int type, Input in)
 	}
 }
 
-void Monster::get_Mon_HP(int type)
+void Monster::set_Mon_HP(int type)
 {
 	if (type == 1) Mon_HP = 500;
 }
@@ -38,6 +38,8 @@ Monster::Monster()
 	Mon_HP = 0;
 	death = false;
 	isattacked = false;
+	attack = false;
+	del = false;
 }
 
 Monster::~Monster()
@@ -163,28 +165,34 @@ void Monster::CheckVaCham(Map& mymap)
 	x2 = (x_pos + TILE_SIZE) / TILE_SIZE;
 	y2 = (y_pos + y_value + TILE_SIZE) / TILE_SIZE;
 
-	if (x1 >= 0 && x2 < MAX_X && y1 >= 0 && y2 < MAX_Y)
+	if (!death)
 	{
-		if (y_value > 0) //roi xuong
+		if (x1 >= 0 && x2 < MAX_X && y1 >= 0 && y2 < MAX_Y)
 		{
-			if (mymap.tile[y2][x1] == 3 || mymap.tile[y2][x2] == 3)
+			if (y_value > 0) //roi xuong
 			{
-				y_pos = y2 * TILE_SIZE;
-				y_pos -= TILE_SIZE;
-				y_value = 0;
-				Stand_on_ground = true;
-				type_input.fall = 0;
+				if (mymap.tile[y2][x1] == 3 || mymap.tile[y2][x2] == 3)
+				{
+					y_pos = y2 * TILE_SIZE;
+					y_pos -= TILE_SIZE;
+					y_value = 0;
+					Stand_on_ground = true;
+					type_input.fall = 0;
+				}
+				else { Stand_on_ground = false; }
 			}
-			else { Stand_on_ground = false; }
-		}
-		else if (y_value < 0)
-		{
-			if (mymap.tile[y1][x1] != 0 || mymap.tile[y1][x2] != 0)
+			else if (y_value < 0)
 			{
-				y_pos = (y1 + 1) * TILE_SIZE;
-				y_value = 0;
+				if (mymap.tile[y1][x1] != 0 || mymap.tile[y1][x2] != 0)
+				{
+					y_pos = (y1 + 1) * TILE_SIZE;
+					y_value = 0;
+				}
 			}
 		}
+	}
+	else {
+		y_value = 10*MON_JUMPSPEED; x_value = 0;
 	}
 
 	x_pos += x_value;
@@ -193,7 +201,7 @@ void Monster::CheckVaCham(Map& mymap)
 	if (x_pos < 0) x_pos = 0;
 	else if (x_pos + width_mon > MAX_X * TILE_SIZE) x_pos = MAX_X * TILE_SIZE - width_mon;
 	if (y_pos < 0) y_pos = 0;
-	else if (y_pos + height_mon > MAX_Y * TILE_SIZE) { y_pos = (MAX_Y + 1) * TILE_SIZE - height_mon; type_input.fall = 1; };
+	else if (y_pos + height_mon > MAX_Y * TILE_SIZE) { y_pos = (MAX_Y + 1) * TILE_SIZE - height_mon; del = true; };
 }
 
 bool Monster::Meet_Sasuke_(const Map mymap)
@@ -219,7 +227,6 @@ void Monster::Action(Sasuke sake)
 	}
 	else MoveAround();
 }
-
 void Monster::MoveAround()
 {
 	double start = Mid - 2 * TILE_SIZE;
@@ -236,24 +243,64 @@ void Monster::set_range(double const& xpos)
 
 void Monster::Is_Attacked(Sasuke sake)
 {
-	if (sake.x_pos - x_pos <= 0 && sake.x_pos - x_pos >= -0.5 * TILE_SIZE)
+	if (sake.x_pos - x_pos <= 0 && sake.x_pos - x_pos >= -0.5 * TILE_SIZE && y_pos == sake.y_pos)
 	{
 		if (sake.type_input.normal_attack == 1 && sake.Direction == Right)
 		{
 			type_input.normal_attack = 0;
 			x_pos += 0.5 * TILE_SIZE;
 			SDL_Delay(20);
-		}
+			Mon_HP -= 50;
+		} 
 	}
-	else if (sake.x_pos - x_pos > 0 && sake.x_pos - x_pos < 0.5*TILE_SIZE)
+	else if (sake.x_pos - x_pos > 0 && sake.x_pos - x_pos < 0.5*TILE_SIZE && y_pos == sake.y_pos)
 	{
 		if (sake.type_input.normal_attack == 1 && sake.Direction == Left)
 		{
 			type_input.normal_attack = 0;
 			x_pos -= 0.5 * TILE_SIZE;
 			SDL_Delay(20);
+			Mon_HP -= 50;
 		}
 	}
+	if (sake.x_pos - TILE_SIZE - x_pos > 0 && sake.x_pos - TILE_SIZE - x_pos < 0.5 * TILE_SIZE && y_pos == sake.y_pos)
+	{
+		if (sake.type_input.HoaDon == 1 && sake.Direction == Left)
+		{
+			type_input.normal_attack = 0;
+			x_pos -= 0.5 * TILE_SIZE;
+			SDL_Delay(20);
+			Mon_HP -= 120;
+		}
+	}
+	else if (sake.x_pos + TILE_SIZE - x_pos <= 0 && sake.x_pos + TILE_SIZE - x_pos >= -0.5 * TILE_SIZE && y_pos == sake.y_pos)
+	{
+		if (sake.type_input.HoaDon == 1 && sake.Direction == Right)
+		{
+			type_input.normal_attack = 0;
+			x_pos += 0.5 * TILE_SIZE;
+			SDL_Delay(20);
+			Mon_HP -= 120;
+		}
+	}
+}
+
+void Monster::Attack(Sasuke& sake) 
+{
+	if (x_pos - sake.x_pos >= 0 && x_pos - sake.x_pos <= 0.5*TILE_SIZE && y_pos == sake.y_pos)
+	{
+		sake.Is_Attackef_Right = true;
+	} else if ( x_pos - sake.x_pos < 0 && x_pos - sake.x_pos > -0.5 * TILE_SIZE && y_pos == sake.y_pos)
+	{
+		sake.Is_Attacked_Left = true;
+	}
+}
+
+bool Monster::Is_Dead() //xem lai
+{
+	if (Mon_HP <= 0 ) death = true;
+	if (del) return true;
+	else return false;
 }
 
 

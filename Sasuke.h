@@ -29,6 +29,8 @@ public:
 	void CheckVaCham(Map& mymap);
 	void SetMoveMap(int x_map_, int y_map_) { x_map = x_map_; y_map = y_map_; };
 	void MoveMap(Map& mymap);
+	void Attacked();
+	void Collect_Point(Map& mymap);
 
 	double x_value;
 	double y_value;
@@ -46,6 +48,9 @@ public:
 	int y_ground;
 	bool death;
 	int attack_count;
+	bool Is_Attacked_Left;
+	bool Is_Attackef_Right;
+	int collected_point;
 };
 
 #endif

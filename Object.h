@@ -21,7 +21,7 @@ public:
 	SDL_Texture* GetObject() const {return myobject; }
 	virtual bool LoadImg(string path, SDL_Renderer* renderer);
 	void Render(SDL_Renderer* des, const SDL_Rect* clip);
-	void Free();
+	virtual void Free();
 };
 
 #endif

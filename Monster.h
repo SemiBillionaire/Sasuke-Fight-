@@ -45,9 +45,11 @@ public:
 	void set_range(double const& xpos);
 	double get_begin() { return begin_move; }
 	double get_end() { return end_move; }
-	void manage_range(Sasuke sake);
-	void get_Mon_HP(int type);
+	//void manage_range(Sasuke sake);
+	void set_Mon_HP(int type);
 	void Is_Attacked(Sasuke sake);
+	void Attack(Sasuke& sake);
+	bool Is_Dead();
 
 private:
 	int type_monster;
@@ -72,6 +74,8 @@ private:
 	double Mon_HP;
 	bool death;
 	bool isattacked;
+	bool attack;
+	bool del;
 };
 
 #endif

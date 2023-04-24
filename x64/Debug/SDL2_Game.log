@@ -1,4 +1,4 @@
 ﻿  main.cpp
-D:\code\SDLMVS\SDL2_Game\SDLFunc.h(47,2): warning C4091: 'typedef ': ignored on left of 'Input' when no variable is declared
-D:\code\SDLMVS\SDL2_Game\SDLFunc.h(57,2): warning C4091: 'typedef ': ignored on left of 'Map' when no variable is declared
+D:\code\SDLMVS\SDL2_Game\SDLFunc.h(51,2): warning C4091: 'typedef ': ignored on left of 'Input' when no variable is declared
+D:\code\SDLMVS\SDL2_Game\SDLFunc.h(61,2): warning C4091: 'typedef ': ignored on left of 'Map' when no variable is declared
   SDL2_Game.vcxproj -> D:\code\SDLMVS\SDL2_Game\x64\Debug\SDL2_Game.exe
