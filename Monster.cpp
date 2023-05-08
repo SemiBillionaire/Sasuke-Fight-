@@ -9,11 +9,19 @@ int frame_number_monster(int type, Input in)
 		if (in.run == 1) return 8;
 		if (in.normal_attack == 1) return 8;
 	}
+	else if (type == 3)
+	{
+		if (in.jump == 1) return 1;
+		if (in.fall == 1) return 1;
+		if (in.run == 1) return 4;
+		if (in.normal_attack == 1) return 4;
+	}
 }
 
 void Monster::set_Mon_HP(int type)
 {
 	if (type == 1) Mon_HP = 500;
+	else if (type == 3) Mon_HP = 1000;
 }
 
 Monster::Monster()
@@ -87,6 +95,34 @@ void Monster::Present(SDL_Renderer* des)
 			else if (type_input.fall == 1) LoadImg("Monster/1/m1_jump_right.png", des);
 			else if (type_input.normal_attack == 1) LoadImg("Monster/1/m1_fight_right.png", des);
 			else if (type_input.run == 1) LoadImg("Monster/1/m1_run_right.png", des);
+		}
+		CurrentIMG++;
+		if (CurrentIMG >= frame_number_monster(type_monster, type_input))
+		{
+			CurrentIMG = 0;
+			if (type_input.normal_attack == 1) type_input.normal_attack = 0;
+		}
+		rect_.x = x_pos - x_map;
+		rect_.y = y_pos - y_map;
+		SDL_Rect* current_clip = &gif[CurrentIMG];
+		SDL_Rect renderQuad = { rect_.x, rect_.y, width_mon, height_mon };
+		SDL_RenderCopy(des, myobject, current_clip, &renderQuad);
+	}
+	else if (type_monster == 3)
+	{
+		if (Direction == Left)
+		{
+			if (type_input.jump == 1) LoadImg("Monster/3/m3_jump_left.png", des);
+			else if (type_input.fall == 1) LoadImg("Monster/3/m3_jump_left.png", des);
+			else if (type_input.normal_attack == 1) LoadImg("Monster/3/m3_fight_left.png", des);
+			else if (type_input.run == 1) LoadImg("Monster/3/m3_run_left.png", des);
+		}
+		else
+		{
+			if (type_input.jump == 1) LoadImg("Monster/3/m3_jump_right.png", des);
+			else if (type_input.fall == 1) LoadImg("Monster/3/m3_jump_right.png", des);
+			else if (type_input.normal_attack == 1) LoadImg("Monster/3/m3_fight_right.png", des);
+			else if (type_input.run == 1) LoadImg("Monster/3/m3_run_right.png", des);
 		}
 		CurrentIMG++;
 		if (CurrentIMG >= frame_number_monster(type_monster, type_input))
@@ -243,57 +279,68 @@ void Monster::set_range(double const& xpos)
 
 void Monster::Is_Attacked(Sasuke sake)
 {
-	if (sake.x_pos - x_pos <= 0 && sake.x_pos - x_pos >= -0.5 * TILE_SIZE && y_pos == sake.y_pos)
+	if (sake.type_input.HoaDon == 1)
 	{
-		if (sake.type_input.normal_attack == 1 && sake.Direction == Right)
+		if (sake.x_pos - TILE_SIZE - x_pos > 0 && sake.x_pos - TILE_SIZE - x_pos < 0.5 * TILE_SIZE && y_pos == sake.y_pos)
 		{
-			type_input.normal_attack = 0;
-			x_pos += 0.5 * TILE_SIZE;
-			SDL_Delay(20);
-			Mon_HP -= 50;
-		} 
-	}
-	else if (sake.x_pos - x_pos > 0 && sake.x_pos - x_pos < 0.5*TILE_SIZE && y_pos == sake.y_pos)
-	{
-		if (sake.type_input.normal_attack == 1 && sake.Direction == Left)
+			if (sake.Direction == Left)
+			{
+				type_input.normal_attack = 0;
+				x_pos -= 0.5 * TILE_SIZE;
+				SDL_Delay(20);
+				Mon_HP -= 120;
+			}
+		}
+		else if (sake.x_pos + TILE_SIZE - x_pos <= 0 && sake.x_pos + TILE_SIZE - x_pos >= -0.5 * TILE_SIZE && y_pos == sake.y_pos)
 		{
-			type_input.normal_attack = 0;
-			x_pos -= 0.5 * TILE_SIZE;
-			SDL_Delay(20);
-			Mon_HP -= 50;
+			if (sake.Direction == Right)
+			{
+				type_input.normal_attack = 0;
+				x_pos += 0.5 * TILE_SIZE;
+				SDL_Delay(20);
+				Mon_HP -= 120;
+			}
 		}
 	}
-	if (sake.x_pos - TILE_SIZE - x_pos > 0 && sake.x_pos - TILE_SIZE - x_pos < 0.5 * TILE_SIZE && y_pos == sake.y_pos)
+	else if (sake.type_input.normal_attack == 1)
 	{
-		if (sake.type_input.HoaDon == 1 && sake.Direction == Left)
+		if (sake.x_pos - x_pos <= 0 && sake.x_pos - x_pos >= -0.5 * TILE_SIZE && y_pos == sake.y_pos)
 		{
-			type_input.normal_attack = 0;
-			x_pos -= 0.5 * TILE_SIZE;
-			SDL_Delay(20);
-			Mon_HP -= 120;
+			if (sake.Direction == Right)
+			{
+				type_input.normal_attack = 0;
+				x_pos += 0.5 * TILE_SIZE;
+				SDL_Delay(20);
+				Mon_HP -= 50;
+			}
 		}
-	}
-	else if (sake.x_pos + TILE_SIZE - x_pos <= 0 && sake.x_pos + TILE_SIZE - x_pos >= -0.5 * TILE_SIZE && y_pos == sake.y_pos)
-	{
-		if (sake.type_input.HoaDon == 1 && sake.Direction == Right)
+		else if (sake.x_pos - x_pos > 0 && sake.x_pos - x_pos < 0.5 * TILE_SIZE && y_pos == sake.y_pos)
 		{
-			type_input.normal_attack = 0;
-			x_pos += 0.5 * TILE_SIZE;
-			SDL_Delay(20);
-			Mon_HP -= 120;
+			if (sake.Direction == Left)
+			{
+				type_input.normal_attack = 0;
+				x_pos -= 0.5 * TILE_SIZE;
+				SDL_Delay(20);
+				Mon_HP -= 50;
+			}
 		}
 	}
 }
 
 void Monster::Attack(Sasuke& sake) 
 {
-	if (x_pos - sake.x_pos >= 0 && x_pos - sake.x_pos <= 0.5*TILE_SIZE && y_pos == sake.y_pos)
-	{
-		sake.Is_Attackef_Right = true;
-	} else if ( x_pos - sake.x_pos < 0 && x_pos - sake.x_pos > -0.5 * TILE_SIZE && y_pos == sake.y_pos)
-	{
-		sake.Is_Attacked_Left = true;
-	}
+	double attack_range;
+	if (type_monster == 1) attack_range = 0.5 * TILE_SIZE;
+	else if (type_monster == 3) attack_range = 0.5 * TILE_SIZE;
+		if (x_pos - sake.x_pos >= 0 && x_pos - sake.x_pos <= attack_range && y_pos == sake.y_pos && type_input.normal_attack == 1)
+		{
+			sake.Is_Attackef_Right = true;
+		}
+		else if (x_pos - sake.x_pos < 0 && x_pos - sake.x_pos > (- 1)*attack_range && y_pos == sake.y_pos && type_input.normal_attack == 1)
+		{
+			sake.Is_Attacked_Left = true;
+		}
+		sake.attacked_by = type_monster;
 }
 
 bool Monster::Is_Dead() //xem lai

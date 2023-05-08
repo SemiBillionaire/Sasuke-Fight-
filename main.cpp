@@ -1,12 +1,16 @@
-﻿#include "Sasuke.h"
+﻿#include "Bars.h"
 #include "TimeManage.h"
 #include "Monster.h"
-
-using namespace std;
+#include "Menu.h"
 
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Event mainevent;
+Mix_Music* gmusic;
+TTF_Font* mainfont;
+TTF_Font* menufont;
+
+using namespace std;
 
 vector<Monster*> Monster_list(int number, int type, double x1, double x2)
 {
@@ -14,6 +18,7 @@ vector<Monster*> Monster_list(int number, int type, double x1, double x2)
     Monster* mon = new Monster[20];
     string path;
     if (type == 1) path = "Monster/1/m1_run_left.png";
+    else if ( type == 3 ) path = "Monster/3/m3_run_left.png";
     for (int i = 0; i < number; i++)
     {
         Monster* new_monster = (mon + i);
@@ -56,7 +61,7 @@ void set_Monster(vector<Monster*>& list_monster, Map mymap, Sasuke& player)
             }
             else if (mymon != nullptr && !(mymon->Meet_Sasuke_(mymap)))
             {
-                if (player.x_pos + SCREEN_WIDTH >= mymon->get_x_pos())
+                if (player.x_pos + SCREEN_WIDTH >= mymon->get_x_pos() && player.x_pos - SCREEN_WIDTH <= mymon->get_x_pos())
                 {
                     mymon->SetMapXY(mymap.start_x_, mymap.start_y_);
                     mymon->MonsterMove(mymap);
@@ -73,66 +78,196 @@ void set_Monster(vector<Monster*>& list_monster, Map mymap, Sasuke& player)
 
 int main(int argc, char* argv[])
 {
+    bool quit = false;
     Time maintime;
     initSDL(window, renderer);
-    SDL_Texture* background = loadBackGround("NarutoBackground2.jpeg", renderer);
-    SDL_RenderCopy(renderer, background, NULL, NULL);
-
-    MapGame mapgame;
-    mapgame.Load_Map("map/map.dat");
-    mapgame.Load_Tiles(renderer);
-
-    vector<Monster*> monster1_turn_1 = Monster_list(4, 1, 105, 117);
-    vector<Monster*> monster1_turn_2 = Monster_list(3, 1, 165, 171);
-    vector<Monster*> monster1_turn_3 = Monster_list(2, 1, 243, 245);
-
-    Sasuke player;
-    player.y_pos = 0*TILE_SIZE;
-    //player.x_pos =106 * TILE_SIZE;
-    player.LoadImg("Sasuke/sasuke_stand_right_official.png", renderer);
-    player.Set_Frame();
-
-    bool quit = false;
-    while (!quit)
+    gmusic = Mix_LoadMUS("SadnessAndSorrow.wav");
+    if (Mix_PlayingMusic() == 0)
     {
-        maintime.begin();
+        //Play the music
+        //Mix_PlayMusic(gmusic, -1);
+    }
+
+    mainfont = TTF_OpenFont("font//dlxfont_.ttf", 15);
+    menufont = TTF_OpenFont("font//dlxfont_.ttf", 40);
+
+    Menu End_Menu;
+    End_Menu.set_menu_type(1);
+    End_Menu.set_color();
+
+    //Start_menu
+    SDL_Texture* background = loadBackGround("Menu/Menu_Start.png", renderer);
+    Menu Start_Menu;
+    Start_Menu.set_menu_type(0);
+    Start_Menu.set_color();
+    while (!Start_Menu.run && !Start_Menu.exit)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, background, NULL, NULL); 
+        Start_Menu.SetMenu(menufont, renderer);
         while (SDL_PollEvent(&mainevent) != 0)
         {
             if (mainevent.type == SDL_QUIT)
             {
-                quit = true;
+                Start_Menu.exit = true;
             }
-            if (player.death) quit = true;
-            player.InputAction(mainevent, renderer);
+            Start_Menu.HandleInputMenu(mainevent, renderer);
         }
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
+    }
+    
+    if (Start_Menu.run)
+    {
+       background = loadBackGround("NarutoBackground2.jpeg", renderer);
+       End_Menu.run = true;
+    }
+    //SDL_Texture* background = loadBackGround("NarutoBackground2.jpeg", renderer);
+
+    //Menu_Loof
+
+    while (End_Menu.run)
+    {
+        Text time;
+        time.SetColor(Text::WHITE_TEXT);
+        Text mark;
+        mark.SetColor(Text::WHITE_TEXT);
+
         SDL_RenderCopy(renderer, background, NULL, NULL);
 
-        Map mymap = mapgame.GetMap();
-        player.SetMoveMap(mymap.start_x_, mymap.start_y_);
-        player.Move(mymap);
-        player.Attacked();
+        MapGame mapgame;
+        mapgame.Load_Map("map/map.dat");
+        mapgame.Load_Tiles(renderer);
+
+        vector<Monster*> monster1_turn_1 = Monster_list(4, 1, 105, 117);
+        vector<Monster*> monster1_turn_2 = Monster_list(3, 1, 165, 171);
+        vector<Monster*> monster1_turn_3 = Monster_list(2, 1, 243, 245);
+        vector<Monster*> monster3_turn_2 = Monster_list(2, 3, 165, 171);
+        vector<Monster*> monster3_turn_3 = Monster_list(2, 3, 241, 246);
+
+        Sasuke player;
+        player.y_pos = 0 * TILE_SIZE;
+        player.x_pos =380 * TILE_SIZE;
+        player.LoadImg("Sasuke/sasuke_stand_right_official.png", renderer);
         player.Set_Frame();
-        player.Collect_Point(mymap);
-        player.Present(renderer);
 
-        player.Is_Attacked_Left = false;
-        player.Is_Attackef_Right = false;
+        string score;
 
-        mapgame.SetMap(mymap);
-        mapgame.Draw_Map(renderer);
-        
-        set_Monster(monster1_turn_1, mymap, player);
-        set_Monster(monster1_turn_2, mymap, player);
-        set_Monster(monster1_turn_3, mymap, player);
+        Bars HealthBar;
+        HealthBar.set_type(0);
+        HealthBar.LoadImg("Bars/HealthBar.png", renderer);
+        HealthBar.Set_Frame();
 
-        SDL_RenderPresent(renderer);
-
-        int real_time = maintime.get_time();
-        if (real_time < time_present_one_frame)
+        maintime.run_game();
+        while (!quit)
         {
-            SDL_Delay(time_present_one_frame - real_time);
+            maintime.begin();
+            while (SDL_PollEvent(&mainevent) != 0)
+            {
+                if (mainevent.type == SDL_QUIT)
+                {
+                    quit = true;
+                    End_Menu.run = false;
+                }
+                if (player.death || player.check_win())
+                {
+                    End_Menu.check_menu_win(player.check_win());
+                    quit = true;
+                }
+                player.InputAction(mainevent, renderer);
+            }
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, background, NULL, NULL);
+
+            Map mymap = mapgame.GetMap();
+
+            //HealthBar.Present(player, renderer);
+
+            //player.Attacked();
+           // player.Set_Frame();
+            player.SetMoveMap(mymap.start_x_, mymap.start_y_);
+            player.Move(mymap);
+            player.Attacked();
+            player.Set_Frame();
+            player.Collect_Point(mymap);
+            player.Present(renderer);
+
+            player.Is_Attacked_Left = false;
+            player.Is_Attackef_Right = false;
+
+            mapgame.SetMap(mymap);
+            mapgame.Draw_Map(renderer);
+
+            set_Monster(monster1_turn_1, mymap, player);
+            set_Monster(monster1_turn_2, mymap, player);
+            set_Monster(monster1_turn_3, mymap, player);
+            set_Monster(monster3_turn_2, mymap, player);
+            set_Monster(monster3_turn_3, mymap, player);
+
+            string game_time = "Time: ";
+            Uint32 time_value = maintime.time_played() / 1000;
+            string str_value = to_string(time_value);
+            game_time += str_value;
+            time.SetText(game_time);
+            time.LoadFromRenderText(mainfont, renderer);
+            time.RenderText(renderer, SCREEN_WIDTH - 2.5 * TILE_SIZE, 15);
+
+            string mark_count = "Mark: ";
+            Uint32 eye_collected = player.collected_point;
+            string mark_value = to_string(eye_collected);
+            mark_count += mark_value;
+            mark.SetText(mark_count);
+            mark.LoadFromRenderText(mainfont, renderer);
+            mark.RenderText(renderer, SCREEN_WIDTH / 2 - TILE_SIZE, 15);
+
+            score = "YOUR SCORE: " + str_value + "s";
+
+            SDL_RenderPresent(renderer);
+
+            int real_time = maintime.get_time();
+            if (real_time < time_present_one_frame)
+            {
+                SDL_Delay(time_present_one_frame - real_time);
+            }
+        }
+
+        SDL_RenderClear(renderer);
+
+        if (End_Menu.run)
+        {
+            if (End_Menu.win)
+            {
+                background = loadBackGround("Menu/Menu_Win.png", renderer);
+                End_Menu.get_score(score);
+            }
+            else background = loadBackGround("Menu/Menu_Lose.png", renderer);
+            End_Menu.set_color();
+        }
+
+        while (!End_Menu.menu_close && End_Menu.run )
+        {
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderClear(renderer);
+            SDL_RenderCopy(renderer, background, NULL, NULL);
+            End_Menu.SetMenu(menufont, renderer);
+            SDL_RenderPresent(renderer);
+            while (SDL_PollEvent(&mainevent) != 0)
+            {
+                if (mainevent.type == SDL_QUIT)
+                {
+                    End_Menu.run = false;
+                    End_Menu.menu_close = true;
+                }
+                End_Menu.HandleInputMenu(mainevent, renderer);
+            }
+            //SDL_RenderPresent(renderer);
+        }
+        if (End_Menu.run)
+        {
+            background = loadBackGround("NarutoBackground2.jpeg", renderer);
+            quit = false;
+            End_Menu.menu_close = false;
         }
     }
 

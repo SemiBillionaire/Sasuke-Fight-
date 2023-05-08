@@ -31,6 +31,7 @@ public:
 	void MoveMap(Map& mymap);
 	void Attacked();
 	void Collect_Point(Map& mymap);
+	bool check_win();
 
 	double x_value;
 	double y_value;
@@ -51,6 +52,10 @@ public:
 	bool Is_Attacked_Left;
 	bool Is_Attackef_Right;
 	int collected_point;
+	int HP;
+	int attacked_by;
+	bool changeHealthBar;
+	int HPDown;
 };
 
 #endif

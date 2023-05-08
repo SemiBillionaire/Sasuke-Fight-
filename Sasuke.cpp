@@ -38,6 +38,9 @@ Sasuke::Sasuke()
 	Is_Attacked_Left = false;
 	Is_Attackef_Right = false;
 	collected_point = 0;
+	HP = 10000;
+	attacked_by = 0;
+	HPDown = 0;
 }
 Sasuke::~Sasuke()
 {
@@ -114,8 +117,12 @@ void Sasuke::Present(SDL_Renderer* des)
 	if (type_input.HoaDon == 1 && Direction == Left)
 	{
 		rect_.x = x_pos - x_map - width_character + TILE_SIZE;
-	} else rect_.x = x_pos - x_map;
-	rect_.y = y_pos - y_map;
+		rect_.y = y_pos - y_map;
+	}
+	else {
+		rect_.x = x_pos - x_map;
+		rect_.y = y_pos - y_map;
+	}
 	SDL_Rect* current_clip = &gif[CurrentIMG];
 	SDL_Rect renderQuad = { rect_.x, rect_.y, width_character, height_character };
 	SDL_RenderCopy(des, myobject, current_clip, &renderQuad);
@@ -343,16 +350,105 @@ void Sasuke::Attacked()
 		}
 	}
 	else type_input.attacked = 0;
+	if (Is_Attacked_Left || Is_Attackef_Right)
+	{
+		if (attacked_by == 1)
+		{
+			HP -= 70;
+			HPDown += 70;
+		}
+		else if (attacked_by == 3)
+		{
+			HP -= 100;
+			HPDown += 100;
+		}
+		if (HPDown >= 1250)
+		{
+			changeHealthBar = true;
+			HPDown -= 1250;
+		}
+		else changeHealthBar = false;
+	}
+	if (HP <= 0) death = true;
 }
 
 void Sasuke::Collect_Point(Map& mymap)
 {
-	int x = x_pos / TILE_SIZE;
-	int y = y_pos / TILE_SIZE;
-	if (mymap.tile[y][x] == 4 || mymap.tile[y-1][x] == 4 || mymap.tile[y+1][x] == 4 || mymap.tile[y][x+1] == 4 || mymap.tile[y][x-1] == 4 
-		|| mymap.tile[y-1][x - 1] == 4 || mymap.tile[y+1][x - 1] == 4 || mymap.tile[y+1][x + 1] == 4 || mymap.tile[y-1][x + 1] == 4)
+	int x1 = (x_pos + x_value) / TILE_SIZE;
+	int y1 = y_pos / TILE_SIZE;
+	int x2 = (x_pos + x_value + TILE_SIZE) / TILE_SIZE;
+	int y2 = (y_pos + TILE_SIZE) / TILE_SIZE;
+
+	if (x1 >= 0 && x2 < MAX_X && y1 >= 0 && y2 < MAX_Y)
 	{
-		collected_point++;
-		mymap.tile[y][x] = 0;
+		if (x_value > 0) //di sang phai
+		{
+			if (mymap.tile[y1][x2] == 4 )
+			{
+				mymap.tile[y1][x2] = 0;
+				collected_point++;
+			}
+			if (mymap.tile[y2][x2] == 4)
+			{
+				mymap.tile[y2][x2] = 0;
+				collected_point++;
+			}
+		}
+		else if (x_value < 0)
+		{
+			if (mymap.tile[y1][x1] == 4 )
+			{
+				mymap.tile[y1][x1] = 0;
+				collected_point++;
+			}
+			if (mymap.tile[y2][x1] == 4)
+			{
+				mymap.tile[y2][x1] = 0;
+				collected_point++;
+			}
+		}
+	}
+
+	x1 = (x_pos) / TILE_SIZE;
+	y1 = (y_pos + y_value) / TILE_SIZE;
+	x2 = (x_pos + TILE_SIZE) / TILE_SIZE;
+	y2 = (y_pos + y_value + TILE_SIZE) / TILE_SIZE;
+
+	if (x1 >= 0 && x2 < MAX_X && y1 >= 0 && y2 < MAX_Y)
+	{
+		if (y_value > 0) //roi xuong
+		{
+			if (mymap.tile[y2][x1] == 4)
+			{
+				mymap.tile[y2][x1] = 0;
+				collected_point++;
+			}
+			if (mymap.tile[y2][x2] == 4)
+			{
+				mymap.tile[y2][x2] = 0;
+				collected_point++;
+			}
+		}
+		else if (y_value < 0)
+		{
+			if (mymap.tile[y1][x1] == 4)
+			{
+				mymap.tile[y1][x1] = 0;
+				collected_point++;
+			}
+			if (mymap.tile[y1][x2] == 4)
+			{
+				mymap.tile[y1][x2] = 0;
+				collected_point++;
+			}
+		}
 	}
 }
+
+bool Sasuke::check_win()
+{
+	if (x_pos >= MAX_X * TILE_SIZE - 2*TILE_SIZE && y_pos <= 4 * TILE_SIZE)
+		return true;
+	return false;
+}
+

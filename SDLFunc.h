@@ -15,7 +15,7 @@ using namespace std;
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 640;
-const string WINDOW_TITLE = "NARUTO NINJA WAR";
+const string WINDOW_TITLE = "SASUKE FIGHT!!!";
 
 const int Colorkey_R = 255;
 const int Colorkey_G = 255;
