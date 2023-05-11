@@ -22,20 +22,16 @@ Game lấy ý tưởng từ bộ truyện tranh Naruto và xoay quanh nhân vậ
 
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_w.png" alt="Sasuke fight!!!" width=20 />   :  Nhảy
 
-<img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_l.png" alt="Sasuke fight!!!" width=20 />   :  Lướt
-
 ### Chiến đấu
 
 <img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_j.png" alt="Sasuke fight!!!" width=20 />   :  Đấm
 
-<img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_k.png" alt="Sasuke fight!!!" width=20 />   :  Đá
-
-<img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_o.png" alt="Sasuke fight!!!" width=20 />   : Chidori
+<img src="https://d1nhio0ox7pgb.cloudfront.net/_img/i_collection_png/48x48/plain/keyboard_key_k.png" alt="Sasuke fight!!!" width=20 />   :  Hỏa Độn
 
 ## Luật chơi
 Người chơi sẽ phải chiến đấu để đánh bại hết quái vật mà không để bị hết máu hay rơi xuống vực thẳm.
 
-Cuối trò chơi, người chơi sẽ phải chiến đấu Boss cuối để có thể thắng được trò chơi và đưa Sasuke ra khỏi vùng đất cấm.
+Trong quá trình đó, người chơi phải thu thập đủ số mắt ender để mở được cánh cổng và đến được nơi có thanh kiếm và thoát khỏi khu rừng.
 
 #  
 
