@@ -32,6 +32,7 @@ public:
 	void Attacked();
 	void Collect_Point(Map& mymap);
 	bool check_win();
+	void Open_Chain(Map& mymap);
 
 	double x_value;
 	double y_value;

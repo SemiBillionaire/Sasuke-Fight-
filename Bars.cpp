@@ -50,7 +50,14 @@ void Bars::Present(Sasuke sake,SDL_Renderer* des)
 	{
 		LoadImg("Bars/HealthBar.png", des);
 	}
-	if (sake.changeHealthBar) CurrentIMG++;
+	if (sake.HP >= 8750) CurrentIMG = 0;
+	else if (sake.HP >= 7500) CurrentIMG = 1;
+	else if (sake.HP >= 6250) CurrentIMG = 2;
+	else if (sake.HP >= 5000) CurrentIMG = 3;
+	else if (sake.HP >= 3750) CurrentIMG = 4;
+	else if (sake.HP >= 2500) CurrentIMG = 5;
+	else if (sake.HP >= 1250) CurrentIMG = 6;
+	else CurrentIMG = 7;
 	rect_.x = x_map;
 	rect_.y = y_map;
 	SDL_Rect* current_clip = &gif[CurrentIMG];

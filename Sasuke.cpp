@@ -452,3 +452,14 @@ bool Sasuke::check_win()
 	return false;
 }
 
+void Sasuke::Open_Chain(Map& mymap)
+{
+	if (collected_point == 90)
+	{
+		for (int y = 0; y <= 6; y++)
+		{
+			mymap.tile[y][390] = 0;
+		}
+	}
+}
+
